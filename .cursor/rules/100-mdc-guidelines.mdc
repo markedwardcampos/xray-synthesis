@@ -1,0 +1,202 @@
+---
+description: FOLLOW guidelines WHEN creating .mdc files in Cursor TO ensure proper structure, metadata formatting, and rule effectiveness
+globs: .cursor/rules/*.mdc
+---
+# Cursor MDC Guidelines
+# A simplified and structured representation of MDC file requirements
+
+metadata:
+  description: Guidelines for creating .mdc files in Cursor
+  version: 1.1.0
+  last_updated: "2024-03-19"
+  file_pattern: "**/*.mdc"
+
+# Document Structure Requirements
+structure:
+  required_sections:
+    - frontmatter
+    - title
+    - context
+    - content_sections
+
+  optional_sections:
+    - version
+    - last_updated
+    - examples
+    - implementations
+    - related_files
+
+  recommended_sections:
+    - practical_examples
+    - common_patterns
+    - type_definitions
+
+# File Organization Rules
+file_organization:
+  location: ".cursor/rules/"
+  naming_convention: "kebab-case with .mdc extension"
+  directory_structure: |
+    PROJECT_ROOT/
+    ├── .cursor/
+    │   └── rules/
+    │       ├── your-rule-name.mdc
+    │       └── ...
+    └── ...
+
+# Document Components
+components:
+  frontmatter:
+    position: "Top of file"
+    required_fields:
+      - description: "Single sentence, clear purpose"
+      - globs: "Comma-separated list of relevant file patterns"
+    example: |
+      ---
+      description: Guidelines for implementing feature X
+      globs: **/*.{ts,tsx}
+      ---
+
+  annotations:
+    syntax: "@annotation_name JSON_content"
+    placement: "Before relevant sections"
+    format: "Valid JSON with proper indentation"
+    types:
+      context: "Project and document context"
+      rules: "List of rules or requirements"
+      format: "Format specifications"
+      options: "Available options"
+      examples: "Implementation examples"
+      implementations: "Full implementation details"
+      related: "Related documentation or code"
+
+  content_structure:
+    headings:
+      h1: "Single main title"
+      h2: "Major sections"
+      h3: "Subsections"
+      h4: "Detailed points"
+
+    code_blocks:
+      syntax: "Always specify language"
+      examples: "Include practical examples"
+      formatting: "Use proper indentation"
+      context: "Add explanatory comments"
+
+# Best Practices
+best_practices:
+  organization:
+    sections: "Use clear hierarchical structure"
+    annotations: "Place before relevant content"
+    examples: "Include practical examples"
+
+  formatting:
+    json: "Properly formatted, valid JSON"
+    markdown: "Clean, consistent spacing"
+    code: "Language-specific syntax highlighting"
+
+  metadata:
+    annotations: "Use semantic names"
+    context: "Provide clear scope"
+    versioning: "Include version information"
+
+# Implementation Guidelines
+implementation:
+  code_examples:
+    completeness: "Must be fully functional"
+    types: "Include all necessary type information"
+    imports: "Show all required imports"
+    context: "Provide setup and usage context"
+
+  documentation:
+    inline: "Add explanatory comments"
+    types: "Document type constraints"
+    errors: "Document error conditions"
+    usage: "Show usage patterns"
+
+# Common Patterns
+common_patterns:
+  rules_section:
+    format: "array of objects"
+    properties:
+      - id
+      - severity
+      - description
+    example:
+      - id: "rule_name"
+        severity: "error"
+        description: "Clear description"
+
+  implementation_section:
+    format: "object with implementation details"
+    required:
+      - language
+      - types
+      - validation
+    example:
+      language: "typescript"
+      types:
+        Type1: "Description"
+      validation:
+        rule1: "Description"
+
+# Common Mistakes to Avoid
+common_mistakes:
+  - id: "missing_frontmatter"
+    wrong: "Starting directly with content"
+    correct: "Include frontmatter at top"
+    reason: "Frontmatter is required for Cursor to properly parse the file"
+
+  - id: "invalid_json"
+    wrong: "Malformed JSON in annotations"
+    correct: "Properly formatted JSON with quotes around keys"
+    reason: "Annotations must contain valid JSON for proper parsing"
+
+  - id: "inconsistent_structure"
+    wrong: "Mixed levels of headings"
+    correct: "Clear hierarchical structure"
+    reason: "Consistent structure helps with readability and parsing"
+
+  - id: "nonexistent_files"
+    wrong: "Referencing files that don't exist in the workspace"
+    correct: "Only reference files that exist and have been verified"
+    reason: "Prevents broken links and maintains documentation integrity"
+
+# Validation Requirements
+validation:
+  required:
+    - "Frontmatter must be present and valid"
+    - "All JSON must be properly formatted"
+    - "Main title must be present"
+    - "At least one content section"
+    - "Complete implementation examples when relevant"
+    - "All referenced files must exist in the workspace"
+
+  recommended:
+    - "Version information"
+    - "Last updated date"
+    - "Clear examples"
+    - "Proper code formatting"
+    - "Type definitions"
+    - "Validation rules"
+    - "Verify file existence before referencing"
+
+# Example Structure
+examples:
+  minimal: |
+    ---
+    description: A simple example MDC file
+    globs: **/*.example
+    ---
+    # Example Rules
+    @context {
+        "type": "example",
+        "version": "1.0.0"
+    }
+    ## Section One
+    @rules [
+        {
+            "id": "rule_one",
+            "severity": "error",
+            "description": "Description of rule one"
+        }
+    ]

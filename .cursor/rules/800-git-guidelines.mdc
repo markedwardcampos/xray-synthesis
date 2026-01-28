@@ -1,0 +1,453 @@
+---
+description: APPLY version control best practices WHEN using Git TO ensure efficient collaboration and code management
+globs: **/*.md, **/*.js, **/*.jsx, **/*.ts, **/*.tsx, **/*.py, **/*.go, **/*.java, **/*.c, **/*.cpp, **/*.h, **/*.cs, **/*.rs, **/*.php, **/*.rb, **/package.json, **/requirements.txt, **/.gitignore
+---
+# Git Workflow Guidelines
+
+@context {
+    "type": "workflow",
+    "purpose": "version_control",
+    "tools": ["git", "github"],
+    "format_version": "1.0.0"
+}
+
+## Overview
+
+These guidelines define best practices for using Git and GitHub to manage changes and source control in software projects.
+
+# Git Conventional Commits
+
+Rule for automatically committing changes made by Cursor AI using conventional commits format.
+
+<rule>
+name: conventional_commits
+description: Automatically commit changes made by Cursor AI using conventional commits format
+filters:
+  - type: event
+    pattern: "build_success"
+  - type: file_change
+    pattern: "*"
+
+actions:
+  - type: execute
+    command: |
+      # Extract the change type and scope from the changes
+      CHANGE_TYPE=""
+      case "$CHANGE_DESCRIPTION" in
+        *"add"*|*"create"*|*"implement"*) CHANGE_TYPE="feat";;
+        *"fix"*|*"correct"*|*"resolve"*) CHANGE_TYPE="fix";;
+        *"refactor"*|*"restructure"*) CHANGE_TYPE="refactor";;
+        *"test"*) CHANGE_TYPE="test";;
+        *"doc"*|*"comment"*) CHANGE_TYPE="docs";;
+        *"style"*|*"format"*) CHANGE_TYPE="style";;
+        *"perf"*|*"optimize"*) CHANGE_TYPE="perf";;
+        *) CHANGE_TYPE="chore";;
+      esac
+
+      # Extract scope from file path
+      SCOPE=$(dirname "$FILE" | tr '/' '-')
+
+      # Commit the changes
+      git add "$FILE"
+      git commit -m "$CHANGE_TYPE($SCOPE): $CHANGE_DESCRIPTION"
+
+  - type: suggest
+    message: |
+      Changes should be committed using conventional commits format:
+
+      Format: <type>(<scope>): <description>
+
+      Types:
+      - feat: A new feature
+      - fix: A bug fix
+      - docs: Documentation only changes
+      - style: Changes that do not affect the meaning of the code
+      - refactor: A code change that neither fixes a bug nor adds a feature
+      - perf: A code change that improves performance
+      - test: Adding missing tests or correcting existing tests
+      - chore: Changes to the build process or auxiliary tools
+
+      The scope should be derived from the file path or affected component.
+      The description should be clear and concise, written in imperative mood.
+
+examples:
+  - input: |
+      # After adding a new function
+      CHANGE_DESCRIPTION="add user authentication function"
+      FILE="src/auth/login.ts"
+    output: "feat(src-auth): add user authentication function"
+
+  - input: |
+      # After fixing a bug
+      CHANGE_DESCRIPTION="fix incorrect date parsing"
+      FILE="lib/utils/date.js"
+    output: "fix(lib-utils): fix incorrect date parsing"
+
+metadata:
+  priority: high
+  version: 1.0
+</rule>
+
+## Core Git Practices
+
+@git_core_practices [
+    {
+        "id": "use_git_github",
+        "description": "Use Git and GitHub to manage changes and source control",
+        "examples": [
+            "Initialize Git repositories for all projects",
+            "Connect local repositories to GitHub remotes",
+            "Use GitHub Pull Requests for code reviews"
+        ],
+        "severity": "requirement"
+    },
+    {
+        "id": "conventional_commits",
+        "description": "Use Conventional Commits for your commit naming and structure",
+        "examples": [
+            "Format: <type>[optional scope]: <description>",
+            "Types: feat, fix, docs, style, refactor, perf, test, build, ci, chore",
+            "Breaking changes: Add ! after type/scope"
+        ],
+        "severity": "requirement"
+    },
+    {
+        "id": "frequent_commits",
+        "description": "Commit after every major change",
+        "examples": [
+            "Commit after implementing a specific function or feature",
+            "Commit after fixing a bug",
+            "Commit after refactoring a component"
+        ],
+        "severity": "requirement"
+    },
+    {
+        "id": "verify_changes",
+        "description": "Review git status to ensure all changed files are being tracked",
+        "examples": [
+            "Run 'git status' before committing",
+            "Check for untracked files that should be included",
+            "Verify all intended changes are staged"
+        ],
+        "severity": "requirement"
+    }
+]
+
+## Branch Strategy
+
+@branch_strategy {
+    "core_rules": [
+        {
+            "id": "branch_per_feature",
+            "description": "Create a new branch for every major set of changes or new feature",
+            "severity": "requirement"
+        },
+        {
+            "id": "branch_naming",
+            "description": "Create new branches following the feature/featurename, fix/fixname, docs/docsname, etc. pattern",
+            "examples": [
+                "feature/user-authentication",
+                "fix/login-crash",
+                "docs/api-documentation",
+                "refactor/networking-layer",
+                "perf/image-loading"
+            ],
+            "severity": "requirement"
+        }
+    ],
+    "main_branches": [
+        {
+            "name": "main",
+            "purpose": "Production-ready code",
+            "protection": "Require pull request reviews before merging"
+        },
+        {
+            "name": "develop",
+            "purpose": "Integration branch for feature development",
+            "protection": "Require status checks to pass before merging"
+        }
+    ],
+    "temporary_branches": [
+        {
+            "pattern": "feature/*",
+            "purpose": "New functionality development",
+            "lifecycle": "Delete after merging to develop"
+        },
+        {
+            "pattern": "fix/*",
+            "purpose": "Bug fixes",
+            "lifecycle": "Delete after merging to develop or main (hotfixes)"
+        },
+        {
+            "pattern": "docs/*",
+            "purpose": "Documentation updates",
+            "lifecycle": "Delete after merging to develop"
+        },
+        {
+            "pattern": "release/*",
+            "purpose": "Release preparation",
+            "lifecycle": "Delete after merging to main and develop"
+        }
+    ]
+}
+
+## Commit Guidelines
+
+@commit_guidelines {
+    "conventional_commits": {
+        "format": "<type>[optional scope]: <description>",
+        "types": [
+            {
+                "name": "feat",
+                "description": "A new feature",
+                "semver_correlation": "MINOR"
+            },
+            {
+                "name": "fix",
+                "description": "A bug fix",
+                "semver_correlation": "PATCH"
+            },
+            {
+                "name": "docs",
+                "description": "Documentation only changes",
+                "semver_correlation": "None"
+            },
+            {
+                "name": "style",
+                "description": "Changes that do not affect the meaning of the code (formatting, etc)",
+                "semver_correlation": "None"
+            },
+            {
+                "name": "refactor",
+                "description": "Code change that neither fixes a bug nor adds a feature",
+                "semver_correlation": "None"
+            },
+            {
+                "name": "perf",
+                "description": "Code change that improves performance",
+                "semver_correlation": "PATCH"
+            },
+            {
+                "name": "test",
+                "description": "Adding missing tests or correcting existing tests",
+                "semver_correlation": "None"
+            },
+            {
+                "name": "build",
+                "description": "Changes that affect the build system or external dependencies",
+                "semver_correlation": "PATCH"
+            },
+            {
+                "name": "ci",
+                "description": "Changes to CI configuration files and scripts",
+                "semver_correlation": "None"
+            },
+            {
+                "name": "chore",
+                "description": "Other changes that don't modify src or test files",
+                "semver_correlation": "None"
+            }
+        ],
+        "scopes": "Derived from component, module, or file path affected by the change",
+        "breaking_changes": "Add ! after type/scope to indicate a breaking change (correlates with MAJOR in SemVer)"
+    },
+    "message_style": {
+        "subject": {
+            "imperative_mood": "Use imperative, present tense (e.g., 'add' not 'added' or 'adds')",
+            "no_period": "Don't end subject line with a period",
+            "character_limit": "Limit subject line to 50 characters"
+        },
+        "body": {
+            "when_to_use": "Use when more explanation is needed than the subject line can provide",
+            "line_wrap": "Wrap body text at 72 characters",
+            "blank_line": "Separate subject from body with a blank line"
+        },
+        "footer": {
+            "breaking_changes": "BREAKING CHANGE: <description>",
+            "issues": "Closes #123, #456"
+        }
+    }
+}
+
+## Pull Request Workflow
+
+@pull_request_workflow {
+    "steps": [
+        {
+            "name": "Create Feature Branch",
+            "description": "Create a new branch from develop (or main for hotfixes)"
+        },
+        {
+            "name": "Implement Changes",
+            "description": "Make changes with frequent, atomic commits"
+        },
+        {
+            "name": "Verify Changes",
+            "description": "Run tests and ensure all changes are tracked"
+        },
+        {
+            "name": "Create Pull Request",
+            "description": "Open a Pull Request to merge into develop (or main for hotfixes)"
+        },
+        {
+            "name": "Code Review",
+            "description": "Address review comments and make requested changes"
+        },
+        {
+            "name": "Merge",
+            "description": "Merge the Pull Request once approved"
+        },
+        {
+            "name": "Delete Branch",
+            "description": "Delete the feature branch after successful merge"
+        }
+    ]
+}
+
+## Git Best Practices
+
+@git_best_practices [
+    {
+        "id": "small_focused_commits",
+        "description": "Make small, focused commits that address a single concern",
+        "examples": [
+            "One commit for one bug fix",
+            "Separate UI changes from data model changes",
+            "Split large features into logical parts"
+        ],
+        "severity": "recommendation"
+    },
+    {
+        "id": "pull_before_push",
+        "description": "Always pull before pushing to remote repository",
+        "examples": [
+            "git pull --rebase origin develop",
+            "Resolve conflicts locally before pushing"
+        ],
+        "severity": "recommendation"
+    },
+    {
+        "id": "no_secrets",
+        "description": "Never commit secrets, credentials, or sensitive information",
+        "examples": [
+            "Use environment variables for API keys",
+            "Store secrets in a secure key management system",
+            "Add sensitive files to .gitignore"
+        ],
+        "severity": "requirement"
+    },
+    {
+        "id": "keep_history_clean",
+        "description": "Keep commit history clean and meaningful",
+        "examples": [
+            "Use interactive rebase to clean up commits before merging",
+            "Squash fixup commits before merging",
+            "Write meaningful commit messages"
+        ],
+        "severity": "recommendation"
+    }
+]
+
+## GitHub Workflow
+
+@github_workflow {
+    "issues": {
+        "templates": "Use issue templates for bugs, features, and documentation",
+        "labels": "Apply appropriate labels (bug, enhancement, documentation, etc.)",
+        "linking": "Reference issues in commits and Pull Requests"
+    },
+    "pull_requests": {
+        "templates": "Use Pull Request templates with checklists",
+        "reviews": "Require at least one approval before merging",
+        "continuous_integration": "Ensure CI checks pass before merging"
+    },
+    "releases": {
+        "tagging": "Tag releases following semantic versioning",
+        "release_notes": "Generate release notes from conventional commits",
+        "artifacts": "Attach build artifacts to releases"
+    }
+}
+
+## Common Git Commands
+
+@git_commands {
+    "basic": [
+        {
+            "command": "git status",
+            "description": "Check the status of your working directory",
+            "when_to_use": "Before committing to verify changes"
+        },
+        {
+            "command": "git add <file>",
+            "description": "Stage changes for commit",
+            "when_to_use": "After making changes to track them"
+        },
+        {
+            "command": "git commit -m \"type(scope): message\"",
+            "description": "Commit staged changes with a conventional message",
+            "when_to_use": "After staging changes you want to commit"
+        },
+        {
+            "command": "git pull",
+            "description": "Fetch and merge changes from remote",
+            "when_to_use": "Before starting work and before pushing"
+        },
+        {
+            "command": "git push",
+            "description": "Push local commits to remote repository",
+            "when_to_use": "After making commits you want to share"
+        }
+    ],
+    "branching": [
+        {
+            "command": "git checkout -b feature/name",
+            "description": "Create and switch to a new feature branch",
+            "when_to_use": "When starting work on a new feature"
+        },
+        {
+            "command": "git checkout develop",
+            "description": "Switch to the develop branch",
+            "when_to_use": "When you need to work on the develop branch"
+        },
+        {
+            "command": "git merge feature/name",
+            "description": "Merge a feature branch into current branch",
+            "when_to_use": "When integrating completed features"
+        }
+    ],
+    "advanced": [
+        {
+            "command": "git rebase -i HEAD~n",
+            "description": "Interactive rebase of the last n commits",
+            "when_to_use": "To clean up commit history before merging"
+        },
+        {
+            "command": "git stash",
+            "description": "Temporarily save uncommitted changes",
+            "when_to_use": "When you need to switch branches with uncommitted changes"
+        },
+        {
+            "command": "git cherry-pick <commit>",
+            "description": "Apply a specific commit to current branch",
+            "when_to_use": "When you need a specific change from another branch"
+        }
+    ]
+}
+
+@best_practices {
+    "workflow": {
+        "regular_commits": "Commit regularly after completing logical units of work",
+        "descriptive_messages": "Write clear, descriptive commit messages using conventional format",
+        "branch_management": "Create focused branches for specific features or fixes",
+        "collaboration": "Use Pull Requests for code reviews and collaboration"
+    },
+    "history_management": {
+        "clean_history": "Maintain a clean, readable commit history",
+        "meaningful_commits": "Make each commit represent a logical, atomic change",
+        "rebase_vs_merge": "Prefer rebasing feature branches before merging to maintain linear history",
+        "squash_when_appropriate": "Consider squashing multiple commits when they represent one logical change"
+    }
+}
+
+@version "1.0.0"
+@last_updated "2024-05-22" 

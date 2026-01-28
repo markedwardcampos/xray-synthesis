@@ -1,0 +1,21 @@
+# Environment
+.env
+.venv/
+__pycache__/
+*.pyc
+
+# Project Data (Private)
+Chat_Ingest/
+llm_ingest/scraped/
+llm_ingest/processed_ids.json
+
+# IDEs
+.vscode/
+.idea/
+.DS_Store
+
+# Artifacts/Brain (MCP/Agent related)
+.gemini/
+brain/
+*.json
+synthesis-*.json

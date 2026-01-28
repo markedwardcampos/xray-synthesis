@@ -1,0 +1,75 @@
+---
+description: MANAGE project memory WHEN developing TO maintain context and project state between sessions
+globs: **/*
+---
+
+# Memory Management System
+
+## Context
+
+- Applies to all project development
+- Ensures consistent state tracking between chats
+- Centralizes project knowledge
+
+## Requirements
+
+- Reference memory file at the start of each conversation
+- Keep memory file updated with current project state
+- Track tasks separately in todo list
+- Follow review process for completed features
+
+## Remember Everything In Memory
+
+Remember everything in @memory.md.
+
+## Memory File Purpose
+
+There will be a memory file (@memory.md) for every project.
+
+The memory file will contain:
+
+- The current state of the project
+- Important architectural decisions
+- Implementation details
+- Requirements and constraints
+- Any notes or relevant details needed between chat sessions
+
+## Memory Maintenance Guidelines
+
+Keep the memory file up to date based on the project's current state by:
+
+- Adding new architectural decisions
+- Updating project structure information
+- Documenting API changes
+- Recording important implementation details
+- Noting dependencies and their versions
+- Documenting environment setup requirements
+
+## Memory vs Todo Distinction
+
+Do not annotate task completion in the memory file. Task completion will be tracked in the to-do list (@todo.md).
+
+## Memory Initialization
+
+If the memory file is empty or missing, create it with appropriate sections based on the project's current state.
+
+## Review Process
+
+When a feature or large change is completed:
+
+1. Run all tests
+2. Fix any failing tests
+3. Address all warnings
+4. Review changed files:
+   - Run `git diff --name-only main` to get a list of changed files
+   - Review each file according to the guidelines in the project memory
+5. Review the todo list and verify all tasks are completed
+6. Update the project memory with new relevant information
+7. Evaluate what should be added to the development guidelines
+8. Commit changes according to the development guidelines
+
+## Memory File Access
+
+At the beginning of each conversation, review the contents of @memory.md to ensure full context about the project.
+
+<version>1.0.0</version>

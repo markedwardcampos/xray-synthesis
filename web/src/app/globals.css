@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #FFFAF0;
+  --color-foreground: #0E1C2D;
+  --color-primary: #1566B9;
+  --color-secondary: #0E1C2D;
+  
+  --radius-custom: 8px;
+  
+  --font-heading: "New Order", "Inter", sans-serif;
+  --font-body: "Mundial", "Inter", sans-serif;
+}
+
+:root {
+  --background: #FFFAF0;
+  --foreground: #0E1C2D;
+  --primary: #1566B9;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+  padding: 0.5rem 1.5rem;
+  border-radius: var(--radius-custom);
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(21, 102, 185, 0.1);
+  border-radius: var(--radius-custom);
+  transition: box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+  box-shadow: 0 10px 30px rgba(21, 102, 185, 0.08);
+}
